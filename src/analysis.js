@@ -124,7 +124,7 @@ function labelSentiment({ rating }) {
  * @returns {{app_name: string, positive: number, neutral: number, negative: number}[]} - An array of objects, each summarizing sentiment counts for an app
  */
 function sentimentAnalysisApp(cleaned) {
-    const rows = Array.isArray(cleaned);
+    const rows = Array.isArray(cleaned) ? cleaned : cleaned?.rows || [];
     const byApp = new Map();
     for (const r of rows) {
         const sentiment = labelSentiment({ rating: r.rating });
@@ -154,7 +154,7 @@ function sentimentAnalysisApp(cleaned) {
  * @returns {{lang_name: string, positive: number, neutral: number, negative: number}[]} - An array of objects, each summarizing sentiment counts for a language
  */
 function sentimentAnalysisLang(cleaned) {
-    const rows = Array.isArray(cleaned);
+    const rows = Array.isArray(cleaned) ? cleaned : cleaned?.rows || [];
     const byLanguage = new Map();
     for (const r of rows) {
         const sentiment = labelSentiment({ rating: r.rating });
@@ -191,7 +191,53 @@ function sentimentAnalysisLang(cleaned) {
  * @returns {{mostReviewedApp: string, mostReviews: number, mostUsedDevice: String, mostDevices: number, avgRating: float}} -
  *          the object containing the answers to the desired summary statistics, in this specific format.
  */
-function summaryStatistics(cleaned) {}
+function summaryStatistics(cleaned) {
+    const rows = Array.isArray(cleaned) ? cleaned : cleaned?.rows || [];
+    const reviews = new Map();
+    for (const r of rows) {
+        const app = r.app_name;
+        reviewsByApp.set(app, (reviewsByApp.get(app) || 0) + 1);
+    }
+    let mostReviews = 0;
+    let mostReviewedApp = '';
+    for (const [app, count] of reviews.entries()) {
+        if (count > mostReviews) {
+            mostReviewedApp = app;
+            mostReviews = count;
+        }
+    }
+    const devices = new Map();
+    let ratingSum = 0;
+    let ratingN = 0;
+    for (const r of rows) {
+        if (r.app_name !== mostReviewedApp) continue;
+        const dev = r.device_type;
+        devices.set(dev, (devices.get(dev) || 0) + 1);
+
+        const ratingNum =
+            typeof r.rating === 'number' ? r.rating : parseFloat(r.rating);
+        if (!Number.isNaN(ratingNum)) {
+            ratingSum += ratingNum;
+            ratingN += 1;
+        }
+    }
+    let mostDevices = 0;
+    let mostUsedDevice = '';
+    for (const [dev, count] of devices.entries()) {
+        if (count > mostDevices) {
+            mostUsedDevice = dev;
+            mostDevices = count;
+        }
+    }
+    const avgRating = ratingN ? ratingSum / ratingN : 0;
+    return {
+        mostReviewedApp,
+        mostReviews,
+        mostUsedDevice,
+        mostDevices,
+        avgRating,
+    };
+}
 
 /**
  * Do NOT modify this section!
