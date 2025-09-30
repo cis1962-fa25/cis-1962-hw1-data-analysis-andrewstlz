@@ -16,14 +16,14 @@ const {
  *      From the analysis.js file, call the parseData method with the correct file path to the data file.
  */
 
-const csv = parseData('src\multilingual_mobile_app_reviews_2025.csv');
+const csv = parseData('src/multilingual_mobile_app_reviews_2025.csv');
 
 /**
  * Step 2: Call the cleanData function
  *      Pass the csv as an argument to the cleanData function.
  */
 
-cleaned = cleanData(csv);
+const cleaned = cleanData(csv);
 
 /**
  * Step 3: Sentiment Analysis
@@ -31,12 +31,18 @@ cleaned = cleanData(csv);
  *      of the sentiments of apps across different apps and languages.
  */
 
-sentimentAnalysisApp(cleaned);
-sentimentAnalysisLang(cleaned);
+const appSummary = sentimentAnalysisApp(cleaned);
+const langSummary = sentimentAnalysisLang(cleaned);
 
 /**
  * Step 4: Statistical Analysis
  *      Call the printAnalysis function to get some summary statistics of the cleaned data.
  */
 
-summaryStatistics(cleaned);
+const statSummary = summaryStatistics(cleaned);
+
+console.log('--- CLEANED ---');
+console.log('Rows:', cleaned.length);
+console.log('App Summary', appSummary.slice(0, 5));
+console.log('Language Summary', langSummary.slice(0, 5));
+console.log('Statistics', statSummary);

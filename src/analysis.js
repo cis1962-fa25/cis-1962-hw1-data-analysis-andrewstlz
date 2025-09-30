@@ -170,7 +170,7 @@ function sentimentAnalysisLang(cleaned) {
                 negative: 0,
             });
         }
-        byLanguage.get(r.lang_name)[sentiment] += 1;
+        byLanguage.get(r.review_language)[sentiment] += 1;
     }
 
     const summary = Array.from(byLanguage.values());
@@ -202,7 +202,7 @@ function summaryStatistics(cleaned) {
     }
     let mostReviews = 0;
     let mostReviewedApp = '';
-    for (const [app, count] of reviews.entries()) {
+    for (const [app, count] of reviewsByApp.entries()) {
         if (count > mostReviews) {
             mostReviewedApp = app;
             mostReviews = count;
