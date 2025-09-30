@@ -13,7 +13,7 @@ const Papa = require('papaparse');
  */
 function parseData(filename) {
     const data = fs.readFileSync(filename, 'utf8');
-    const { parsed_csv } = Papa.parse(data, {
+    const parsed_csv = Papa.parse(data, {
         header: true,
         dynamicTyping: false,
     });
@@ -66,7 +66,9 @@ function cleanData(csv) {
         const num_helpful_votes = parseInt(r.num_helpful_votes);
         const user_age = parseInt(r.user_age);
         const rating = parseFloat(r.rating);
-        const review_date = Date.parse(r.review_date);
+        const review_date = new Date(
+            String(r.review_date).replace(' ', 'T') + 'Z',
+        );
         const verified_purchase = r.verified_purchase === 'True';
         const out = {
             review_id,
@@ -160,9 +162,9 @@ function sentimentAnalysisLang(cleaned) {
         const sentiment = labelSentiment({ rating: r.rating });
         r.sentiment = sentiment;
 
-        if (!byLanguage.has(r.lang_name)) {
-            byLanguage.set(r.lang_name, {
-                lang_name: r.lang_name,
+        if (!byLanguage.has(r.review_language)) {
+            byLanguage.set(r.review_language, {
+                lang_name: r.review_language,
                 positive: 0,
                 neutral: 0,
                 negative: 0,
@@ -193,7 +195,7 @@ function sentimentAnalysisLang(cleaned) {
  */
 function summaryStatistics(cleaned) {
     const rows = Array.isArray(cleaned) ? cleaned : cleaned?.rows || [];
-    const reviews = new Map();
+    const reviewsByApp = new Map();
     for (const r of rows) {
         const app = r.app_name;
         reviewsByApp.set(app, (reviewsByApp.get(app) || 0) + 1);
