@@ -1,5 +1,5 @@
 /**
- * You may use this file to call the functions within your code for testing purposes. 
+ * You may use this file to call the functions within your code for testing purposes.
  * Code written in this file will not be graded or submitted.
  * The steps are labeled for your convenience.
  */
@@ -16,10 +16,16 @@ const {
  *      From the analysis.js file, call the parseData method with the correct file path to the data file.
  */
 
+const csv = parseData(
+    'C:\Users\andre\cis-1962-hw1-data-analysis-andrewstlz\src\multilingual_mobile_app_reviews_2025.csv',
+);
+
 /**
  * Step 2: Call the cleanData function
  *      Pass the csv as an argument to the cleanData function.
  */
+
+cleaned = cleanData(csv);
 
 /**
  * Step 3: Sentiment Analysis
@@ -27,7 +33,12 @@ const {
  *      of the sentiments of apps across different apps and languages.
  */
 
+sentimentAnalysisApp(cleaned);
+sentimentAnalysisLang(cleaned);
+
 /**
  * Step 4: Statistical Analysis
  *      Call the printAnalysis function to get some summary statistics of the cleaned data.
  */
+
+summaryStatistics(cleaned);
